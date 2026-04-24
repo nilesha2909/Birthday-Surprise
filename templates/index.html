@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{{ data.title }}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+</head>
+<body>
+    <div class="hearts"></div>
+
+    <section class="hero-screen" id="countdown-screen">
+        <div class="hero-content">
+            <p class="eyebrow">Birthday Surprise Loading</p>
+            <h1>Preparing your birthday surprise…</h1>
+            <div class="countdown-circle">
+                <span id="countdown-number">{{ data.countdown_start }}</span>
+            </div>
+            <p class="hero-note">Do not skip this. Something special is waiting for you ❤️</p>
+        </div>
+    </section>
+
+    <section class="memory-screen hidden" id="memory-screen">
+        <div class="memory-overlay"></div>
+
+        <div class="swiper memory-swiper" id="memory-swiper-wrap">
+            <div class="swiper-wrapper">
+                {% for memory in data.memories %}
+                <div class="swiper-slide">
+                    <div class="memory-card">
+                        <div class="memory-photo-shell">
+                            <img src="{{ memory.image }}" alt="{{ memory.title }}">
+                        </div>
+                        <div class="memory-card-content">
+                            <span>{{ memory.year }}</span>
+                            <h3>{{ memory.title }}</h3>
+                            <p>{{ memory.description }}</p>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="birthday-note-card hidden" id="birthday-note-card">
+            <p class="eyebrow">Happy Birthday ❤️</p>
+            <h2>To the love of my life</h2>
+            <div class="birthday-story-lines">
+                {% for line in data.birthday_story %}
+                <p>{{ line }}</p>
+                {% endfor %}
+            </div>
+            <button class="primary-btn" id="enter-story-btn">Begin Our Story ❤️</button>
+        </div>
+    </section>
+
+    <main class="hidden" id="main-content">
+        <section class="home-intro section">
+            <div class="container center narrow">
+                <p class="eyebrow">Welcome</p>
+                <h1>{{ data.title }}</h1>
+                <p class="lead">{{ data.subtitle }}</p>
+                <a href="#analytics" class="primary-btn intro-btn">Begin Our Story ❤️</a>
+            </div>
+        </section>
+
+        <section class="section" id="analytics">
+            <div class="container">
+                <div class="section-heading" data-aos="fade-up">
+                    <p class="eyebrow">Love Analytics Dashboard</p>
+                    <h2>Our relationship, but make it data</h2>
+                </div>
+                <div class="stats-grid">
+                    {% for stat in data.stats %}
+                    <div class="stat-card" data-aos="zoom-in" data-aos-delay="{{ loop.index0 * 80 }}">
+                        <span>{{ stat.label }}</span>
+                        <strong>{{ stat.value }}</strong>
+                        <small>{{ stat.note }}</small>
+                    </div>
+                    {% endfor %}
+                </div>
+                <div class="chart-card" data-aos="fade-up">
+                    <h3>Happiness Over Time</h3>
+                    <canvas id="loveChart"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <section class="section alt-section" id="love-letter">
+            <div class="container letter-box narrow" data-aos="fade-up">
+                <p class="eyebrow">Love Letter Generator</p>
+                <h2>Press the button whenever you want a reminder ❤️</h2>
+                <button class="primary-btn" id="generate-message-btn">Generate Love Message ❤️</button>
+                <div class="message-card hidden" id="love-message"></div>
+            </div>
+        </section>
+
+        <section class="section" id="quiz-section">
+            <div class="container narrow">
+                <div class="section-heading center" data-aos="fade-up">
+                    <p class="eyebrow">Mini Love Quiz</p>
+                    <h2>A few fun questions for my birthday boy 😄</h2>
+                </div>
+                <div class="quiz-card" data-aos="fade-up">
+                    <div id="quiz-container"></div>
+                    <div class="quiz-actions">
+                        <button class="primary-btn" id="next-question-btn">Next</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="section alt-section" id="story-timeline">
+            <div class="container">
+                <div class="section-heading center" data-aos="fade-up">
+                    <p class="eyebrow">Our Story</p>
+                    <h2>Moments that made us</h2>
+                </div>
+                <div class="timeline">
+                    {% for item in data.timeline %}
+                    <div class="timeline-item" data-aos="fade-up">
+                        <div class="timeline-dot"></div>
+                        <div class="timeline-content glass-card {% if item.image %}with-photo{% endif %}">
+                            <div class="timeline-text">
+                                <span>{{ item.year }}</span>
+                                <h3>{{ item.title }}</h3>
+                                <p>{{ item.text }}</p>
+                            </div>
+                            {% if item.image %}
+                            <div class="timeline-photo-shell">
+                                <img src="{{ item.image }}" alt="{{ item.title }}">
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </section>
+
+        <section class="section" id="special-memories">
+            <div class="container">
+                <div class="section-heading center" data-aos="fade-up">
+                    <p class="eyebrow">Special Memories</p>
+                    <h2>The little things that stayed in my heart</h2>
+                </div>
+                <div class="memory-grid">
+                    {% for item in data.special_memories %}
+                    <div class="memory-note-card glass-card" data-aos="zoom-in" data-aos-delay="{{ loop.index0 * 80 }}">
+                        <h3>{{ item.title }}</h3>
+                        <p>{{ item.text }}</p>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </section>
+
+        <section class="section alt-section" id="admire-section">
+            <div class="container narrow" data-aos="fade-up">
+                <div class="section-heading center">
+                    <p class="eyebrow">Things I Admire About You</p>
+                    <h2>The kind of person you are</h2>
+                </div>
+                <div class="admire-card glass-card">
+                    {% for line in data.admire_lines %}
+                    <p>{{ line }}</p>
+                    {% endfor %}
+                </div>
+            </div>
+        </section>
+
+        {% if data.video_url %}
+        <section class="section" id="journey-video-section">
+            <div class="container narrow center" data-aos="fade-up">
+                <p class="eyebrow">Our Journey Video</p>
+                <h2>From friends to lovers to our forever journey 🎬</h2>
+                <div class="video-card">
+                    <video controls preload="metadata" id="journey-video">
+                        <source src="{{ data.video_url }}">
+                        Your browser does not support the video tag.
+                    </video>
+                </div>
+            </div>
+        </section>
+        {% endif %}
+
+        <section class="section alt-section" id="surprise-button-section">
+            <div class="container center narrow" data-aos="zoom-in">
+                <p class="eyebrow">Secret Surprise</p>
+                <h2>Click only if you love me ❤️</h2>
+                <button class="primary-btn" id="secret-surprise-btn">Click only if you love me ❤️</button>
+            </div>
+        </section>
+    </main>
+
+    <div class="proposal-modal hidden" id="proposal-modal">
+        <div class="modal-card glass-card">
+            <h2>Will you continue growing old with me forever?</h2>
+            <p class="modal-note">Choose wisely, mister 😌</p>
+            <div class="proposal-actions" id="proposal-actions">
+                <button class="primary-btn" id="yes-btn">YES ❤️</button>
+                <button class="secondary-btn" id="no-btn">NO 🙈</button>
+            </div>
+        </div>
+    </div>
+
+    <section class="final-surprise hidden" id="final-surprise">
+        <div class="final-surprise-overlay"></div>
+        <div class="final-surprise-card">
+            <p class="eyebrow">Congratulations ❤️</p>
+            <h2>You unlocked your birthday surprise</h2>
+            <p class="final-surprise-subtitle">{{ data.date_plan.title }}</p>
+
+            <div class="final-plan-grid">
+                <div class="final-plan-item"><span>Plan</span><strong>{{ data.date_plan.movie }}</strong></div>
+                <div class="final-plan-item"><span>When</span><strong>{{ data.date_plan.when }}</strong></div>
+                <div class="final-plan-item"><span>Detail</span><strong>{{ data.date_plan.detail }}</strong></div>
+                <div class="final-plan-item"><span>Secret</span><strong>{{ data.date_plan.secret }}</strong></div>
+            </div>
+
+            <p class="final-note">{{ data.date_plan.note }}</p>
+            <p class="final-birthday-line">Wish you a very Happy Birthday, love ❤️</p>
+            <button class="primary-btn" id="show-closing-btn">One last thing ❤️</button>
+        </div>
+    </section>
+
+    <section class="closing-section hidden" id="closing-section">
+        <div class="closing-final-wrap">
+            <p class="eyebrow">The End… for now</p>
+            <h2>{{ data.closing_note.title }}</h2>
+            <div class="closing-final-copy">
+                {% for line in data.closing_note.lines %}
+                <p>{{ line }}</p>
+                {% endfor %}
+            </div>
+            <button class="primary-btn" id="replay-btn">Replay Our Story ❤️</button>
+        </div>
+    </section>
+
+    {% if data.audio_url %}
+    <audio id="bgMusic" loop>
+        <source src="{{ data.audio_url }}">
+    </audio>
+    {% endif %}
+
+    <script>
+        window.SURPRISE_DATA = {
+            countdownStart: {{ data.countdown_start | tojson }},
+            loveMessages: {{ data.love_messages | tojson }},
+            happinessLabels: {{ data.happiness_labels | tojson }},
+            happinessValues: {{ data.happiness_values | tojson }},
+            quiz: {{ data.quiz | tojson }}
+        };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>
